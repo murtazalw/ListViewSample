@@ -18,6 +18,7 @@ public class MainActivity extends Activity {
     EditText inputSearch;
     ListView listView;
 
+    //adapter for ListView
     ArrayAdapter<String> adapter;
 
     @Override
