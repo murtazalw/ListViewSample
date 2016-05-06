@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <!-- Editext for Search -->
+    <!-- Text field for Search -->
     <EditText android:id="@+id/inputSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Search products.."
+        android:hint="@string/search_hint"
         android:inputType="textVisiblePassword"/>
 
     <ListView
