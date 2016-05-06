@@ -10,4 +10,6 @@
     <string name="pref_listview">Listview</string>
     <string name="pref_show_list">Show List</string>
     <string name="pref_yes_no">Yes/No</string>
+    <string name="pref_lists">Show Lists</string>
+    <string name="pref_title_lists">Lists Settings</string>
 </resources>

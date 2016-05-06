@@ -109,7 +109,6 @@ public class MainActivity extends Activity {
 
             case R.id.menu_settings: {
                 Intent i = new Intent(this, ListViewSettingsActivity.class);
-                i.putExtra("msg", "msg msg");
                 startActivity(i);
                 break;
             }

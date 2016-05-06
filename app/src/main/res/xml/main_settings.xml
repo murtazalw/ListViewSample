@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/pref_listview" >
-        <EditTextPreference
-            android:title="@string/pref_show_list"
-            android:summary="@string/pref_yes_no"
-            android:key="prefUsername"/>
+    <PreferenceCategory android:title="@string/pref_title_lists" >
+        <SwitchPreference
+        android:key="pref_key_lists"
+        android:title="@string/pref_lists"
+        android:defaultValue="true" />
     </PreferenceCategory>
 
 
