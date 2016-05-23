@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/pref_title_lists" >
+    <PreferenceCategory android:title="Lists Settings" >
         <SwitchPreference
         android:key="pref_key_lists"
         android:title="@string/pref_lists"
-        android:defaultValue="true" />
+        android:defaultValue="true"/>
     </PreferenceCategory>
 
 
