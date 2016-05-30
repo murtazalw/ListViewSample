@@ -3,7 +3,9 @@ package com.example.murtaza.listviewsample;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,22 +14,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MainActivity extends Activity {
 
     //Variables for xml elements
     EditText inputSearch;
     ListView listView;
+    SwipeRefreshLayout refreshLayout;
 
     //adapter for ListView
-    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> adapter, refreshedAdapter;
 
     private static final int RESULT_SETTINGS = 1;
+
+    String[] products;
+    ArrayList<String> list, refreshedList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +54,17 @@ public class MainActivity extends Activity {
         // Get ListView object from xml
         listView = (ListView) findViewById(R.id.list);
 
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+
         // Defined Array values to show in ListView
-        String[] products = new String[]{"Dell Inspiron", "HTC One X", "HTC Wildfire S", "HTC Sense", "HTC Sensation XE",
+        products = new String[]{"Dell Inspiron", "HTC One X", "HTC Wildfire S", "HTC Sense", "HTC Sensation XE",
                 "iPhone 4S", "Samsung Galaxy Note 800",
                 "Samsung Galaxy S3", "MacBook Air", "Mac Mini", "MacBook Pro"};
+
+        list = new ArrayList<String>();
+        Collections.addAll(list, products);
+
+        refreshedList = list;
 
         // Define a new Adapter
         // First parameter - Context
@@ -53,7 +73,7 @@ public class MainActivity extends Activity {
         // Forth - the Array of data
 
         adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, products);
+                android.R.layout.simple_list_item_1, android.R.id.text1, list);
 
         if (loadPrefs())
             listView.setAdapter(adapter);
@@ -78,8 +98,59 @@ public class MainActivity extends Activity {
             }
         });
 
+        listView.setOnTouchListener(new OnSwipeTouchListener(this, listView, list) {
+
+            @Override
+            public void onSwipeRight(int pos) {
+                swipe(pos, android.R.anim.slide_out_right);
+            }
+
+            @Override
+            public void onSwipeLeft(int pos) {
+                swipe(pos, android.R.anim.slide_in_left);
+            }
+
+            public void swipe(final int pos, int dir) {
+                final Animation anim =
+                        AnimationUtils.loadAnimation(MainActivity.this,
+                                dir);
+                anim.setDuration(1000);
+                listView.getChildAt(pos).startAnimation(anim);
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        list.remove(pos);
+                        adapter.notifyDataSetChanged();
+                        anim.cancel();
+                    }
+                }, 1000);
+            }
+        });
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshList();
+            }
+        });
         search(inputSearch);
     }
+
+    private void refreshList() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.clear();
+                Collections.addAll(list, products);
+                adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, list);
+                listView.setAdapter(adapter);
+                refreshLayout.setRefreshing(false);
+            }
+        }, 1000);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,14 +193,13 @@ public class MainActivity extends Activity {
     }
 
 
-
     public void search(EditText text) {
         text.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                    // When user changed the Text
-                    MainActivity.this.adapter.getFilter().filter(cs);
+                // When user changed the Text
+                MainActivity.this.adapter.getFilter().filter(cs);
             }
 
             @Override
